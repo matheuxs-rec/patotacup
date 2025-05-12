@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COPA PATOTA - Apostas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+  </head>
+
+<body>
+
+  <div class="container">
+    <h1>COPA PATOTA - Apostas</h1>
+    <h2>Vote nos Vencedores dos Jogos</h2>
+
+    <div class="jogos" id="jogos-section">
+      <!-- Jogos automáticos entre os 4 times -->
+    </div>
+
+    <div class="final">
+      <h2>Quem será o Campeão da Final?</h2>
+      <div class="jogo">
+        <button onclick="votarFinal('cfc')">
+          <img src="img/cabaco.jpg" alt="CFC Logo" class="team-logo">CFC
+        </button>
+        <button onclick="votarFinal('estressados')">
+          <img src="img/estressados.jpg" alt="Estressados FC Logo" class="team-logo">Estressados FC
+        </button>
+        <button onclick="votarFinal('chupisco')">
+          <img src="img/chupisco.jpg" alt="Chupisco FC Logo" class="team-logo">Chupisco FC
+        </button>
+        <button onclick="votarFinal('monobola')">
+          <img src="img/monobola.jpg" alt="Monobola RFC Logo" class="team-logo">Monobola RFC
+        </button>
+      </div>
+      <div class="resultado" id="final-resultado">
+        Votos para o campeão: <br>
+        CFC: <span id="final-cfc">0</span> |
+        Estressados: <span id="final-estressados">0</span> |
+        Chupisco FC: <span id="final-chupisco">0</span> |
+        Monobola RFC: <span id="final-monobola">0</span>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>© 2025 COPA PATOTA. Todos os direitos reservados.</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+
+</html>
