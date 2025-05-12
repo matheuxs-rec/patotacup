@@ -143,6 +143,7 @@
     // Inicializa votos
     if (!localStorage.getItem('votos_jogos')) {
       const votos = {};
+      // Gera todos os jogos possíveis entre os times
       for (let i = 0; i < chaves.length; i++) {
         for (let j = i + 1; j < chaves.length; j++) {
           const jogo = `${chaves[i]}_vs_${chaves[j]}`;
