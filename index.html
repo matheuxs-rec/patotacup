@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COPA PATOTA - Apostas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #1e3a8a;
+    }
+    .container {
+      width: 80%;
+      margin: 0 auto;
+    }
+    .jogos, .final {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      margin-bottom: 40px;
+      padding: 20px;
+    }
+    .jogo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #ddd;
+    }
+    .jogo:last-child {
+      border-bottom: none;
+    }
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      width: 40%;
+    }
+    button {
+      padding: 12px 20px;
+      background-color: #1e3a8a;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 48%;
+    }
+    button:hover {
+      background-color: #3b82f6;
+    }
+    .odds {
+      font-size: 18px;
+      color: #4b5563;
+      margin-top: 5px;
+      font-weight: 600;
+    }
+    .final .jogo {
+      font-size: 20px;
+      text-align: center;
+    }
+    .resultado {
+      margin-top: 20px;
+      font-weight: 600;
+      color: #1e3a8a;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #6b7280;
+    }
+    .team-logo {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>COPA PATOTA - Apostas</h1>
+    <h2>Vote nos Vencedores dos Jogos</h2>
+
+    <div class="jogos" id="jogos-section">
+      <!-- Jogos automáticos entre os 4 times -->
+    </div>
+
+    <div class="final">
+      <h2>Quem será o Campeão da Final?</h2>
+      <div class="jogo">
+        <button onclick="votarFinal('cfc')">
+          <img src="cabaco.jpg" alt="CFC Logo" class="team-logo">CFC
+        </button>
+        <button onclick="votarFinal('estressados')">
+          <img src="estressados.jpg" alt="Estressados FC Logo" class="team-logo">Estressados FC
+        </button>
+        <button onclick="votarFinal('chupisco')">
+          <img src="chupisco.jpg" alt="Chupisco FC Logo" class="team-logo">Chupisco FC
+        </button>
+        <button onclick="votarFinal('monobola')">
+          <img src="monobola.jpg" alt="Monobola RFC Logo" class="team-logo">Monobola RFC
+        </button>
+      </div>
+      <div class="resultado" id="final-resultado">
+        Votos para o campeão: <br>
+        CFC: <span id="final-cfc">0</span> |
+        Estressados: <span id="final-estressados">0</span> |
+        Chupisco FC: <span id="final-chupisco">0</span> |
+        Monobola RFC: <span id="final-monobola">0</span>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>© 2025 COPA PATOTA. Todos os direitos reservados.</p>
+    </div>
+  </div>
+
+  <script>
+    const times = {
+      cfc: 'CFC',
+      estressados: 'Estressados FC',
+      chupisco: 'Chupisco FC',
+      monobola: 'Monobola RFC'
+    };
+
+    const odds = {
+      cfc: 7.00, // Odds para o time mais fraco (CFC)
+      estressados: 4.00, // Odds para Estressados FC
+      chupisco: 1.50, // Odds para Chupisco FC
+      monobola: 2.50 // Odds para o time mais forte (Monobola RFC)
+    };
+
+    const chaves = Object.keys(times);
+
+    // Inicializa votos
+    if (!localStorage.getItem('votos_jogos')) {
+      const votos = {};
+      for (let i = 0; i < chaves.length; i++) {
+        for (let j = i + 1; j < chaves.length; j++) {
+          const jogo = `${chaves[i]}_vs_${chaves[j]}`;
+          votos[jogo] = { [chaves[i]]: 0, [chaves[j]]: 0 };
+        }
+      }
+      localStorage.setItem('votos_jogos', JSON.stringify(votos));
+    }
+
+    if (!localStorage.getItem('votos_final')) {
+      const votosFinal = { cfc: 0, estressados: 0, chupisco: 0, monobola: 0 };
+      localStorage.setItem('votos_final', JSON.stringify(votosFinal));
+    }
+
+    function criarBotoesDeJogo() {
+      const votos = JSON.parse(localStorage.getItem('votos_jogos'));
+      const jogosDiv = document.getElementById('jogos-section');
+      
+      // Gera todos os jogos entre os times
+      for (let i = 0; i < chaves.length; i++) {
+        for (let j = i + 1; j < chaves.length; j++) {
+          const a = chaves[i];
+          const b = chaves[j];
+          const jogoId = `${a}_vs_${b}`;
+          const jogoDiv = document.createElement('div');
+          jogoDiv.className = 'jogo';
+          jogoDiv.innerHTML = `
+            <span>
+              <img src="${a === 'cfc' ? 'cabaco.jpg' : a + '.jpg'}" alt="${times[a]} Logo" class="team-logo">${times[a]} vs 
+              <img src="${b === 'cfc' ? 'cabaco.jpg' : b + '.jpg'}" alt="${times[b]} Logo" class="team-logo">${times[b]}
+            </span>
+            <div class="button-group">
+              <button onclick="votarJogo('${jogoId}', '${a}')">${times[a]}</button>
+              <button onclick="votarJogo('${jogoId}', '${b}')">${times[b]}</button>
+            </div>
+            <div class="odds">
+              <span>Odds: R$ ${odds[a].toFixed(2)} vs R$ ${odds[b].toFixed(2)}</span>
+            </div>
+            <div>
+              <small>${times[a]}: ${votos[jogoId][a]} | ${times[b]}: ${votos[jogoId][b]}</small>
+            </div>
+          `;
+          jogosDiv.appendChild(jogoDiv);
+        }
+      }
+    }
+
+    function votarJogo(jogoId, time) {
+      const votos = JSON.parse(localStorage.getItem('votos_jogos'));
+      votos[jogoId][time]++;
+      localStorage.setItem('votos_jogos', JSON.stringify(votos));
+      location.reload(); // Atualiza contagem
+    }
+
+    function votarFinal(time) {
+      const votosFinal = JSON.parse(localStorage.getItem('votos_final'));
+      votosFinal[time]++;
+      localStorage.setItem('votos_final', JSON.stringify(votosFinal));
+      atualizarFinal();
+    }
+
+    function atualizarFinal() {
+      const votos = JSON.parse(localStorage.getItem('votos_final'));
+      document.getElementById('final-cfc').innerText = votos.cfc;
+      document.getElementById('final-estressados').innerText = votos.estressados;
+      document.getElementById('final-chupisco').innerText = votos.chupisco;
+      document.getElementById('final-monobola').innerText = votos.monobola;
+    }
+
+    criarBotoesDeJogo();
+    atualizarFinal();
+  </script>
+
+</body>
+</html>
